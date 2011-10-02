@@ -13,7 +13,7 @@
 	 * Current culture ISO code, to be set early on by the server and used by l10n submodules.
 	 */
 	self.culture = {
-		//ISO 639-1: Two-letter lowercase culture code associated with a language.
+		// ISO 639-1: Two-letter lowercase culture code associated with a language.
 		lang: null, 
 		// ISO 3166-1 alpha-2: Two-letter uppercase subculture code associated with a country or region.
 		region: null, 

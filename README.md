@@ -8,7 +8,7 @@ culture : Current culture ISO code from navigator.language.
     
 getText : Promises to retrieve a localized text object from a localization endpoint.
 
-    $.when($.l10n.getText({packages: ['scroller]}) 
+    $.when($.l10n.getText({packages: ['scroller']}) 
       .then(function(oTxt){
         $.scroller.setDefaults({prev: oTxt.get('Previous'), next: oTxt.get('Next')});
       });
@@ -35,6 +35,7 @@ getScript : Loads a localized script based on the current culture.
 
 ###TODO:
 
+* simplify getText args to (url, params)
 * re-consider using CommonJS module pattern instead
 * manage individual packages in storage
 * create sample getText endpoint using node
