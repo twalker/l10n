@@ -8,7 +8,11 @@ $(document).ready(function(){
 
 	function generateStorageKey(url, params){
 		//var storageKey = 'l10n:' + iso + ':' + ($.isArray(packages) ? packages.join(',') : packages);
-		keyParts = ['l10n', url, $.param(params).split('&').sort()];
+		var query = $.extend({
+				culture: 'en-US'
+			}, params || {}),
+						
+		keyParts = ['l10n', url, $.param(query).split('&').sort()];
 		return keyParts.join(':');
 	}
 	
@@ -81,25 +85,24 @@ $(document).ready(function(){
 
 	test("getText (multiple invocations in $.when construct)", 2, function(){
 		var fakeServer = sinon.sandbox.useFakeServer(),
-				storageKey1 = generateStorageKey('/fakeservice', {packages:'packageA'}),
-				storageKey2 = generateStorageKey('/fakeservice', {packages:'packageB'}),
+				storageKey1 = generateStorageKey('/fakeservice', {packages:'package1'}),
+				storageKey2 = generateStorageKey('/fakeservice', {packages:'package2'}),
 				package1 = {hi:'mom'},
 				package2 = {hello:'dad'};
 
 		
 		fakeServer.respondWith(
-			"GET", /fakeservice\?culture=en-US&packages=packageA/,
+			"GET", /fakeservice\?culture=en-US&packages=package1/,
 		  [200, { "Content-Type": "application/json" }, JSON.stringify(package1)]
 		);
 		fakeServer.respondWith(
-			"GET", /fakeservice\?culture=en-US&packages=packageB/,
+			"GET", /fakeservice\?culture=en-US&packages=package2/,
 		  [200, { "Content-Type": "application/json" }, JSON.stringify(package2)]
 		);
 		
 		$.when(
 			$.l10n.getText('fakeservice', { packages: 'packageA'}),
-			$.l10n.getText('fakeservice', { packages: 'packageB'})
-			)
+			$.l10n.getText('fakeservice', { packages: 'packageB'}))
 			.then(
 				function(p1, p2){
 					equal(p1.get('hi'), 'mom', "should pass then first call's text object as first argument");
@@ -130,7 +133,7 @@ $(document).ready(function(){
 		var stored = {hi: "mom"};
 		if(supportsStorage){
 			sessionStorage.setItem(generateStorageKey('some/url', {packages:'packageA'}), JSON.stringify(stored));
-			$.l10n.getText('some/url', {packages: ['packageA']}).done(function(oTxt){
+			$.l10n.getText('some/url', {packages: 'packageA'}).done(function(oTxt){
 				equal(oTxt.get('hi'), 'mom', "Should retrieve text objects from session sessionStorage.");
 			});
 		} else {

@@ -35,7 +35,8 @@ getScript : Loads a localized script based on the current culture.
 
 ###TODO:
 
-* simplify getText args to (url, params)
+x simplify getText args to (url, params)
 * re-consider using CommonJS module pattern instead
 * manage individual packages in storage
 * create sample getText endpoint using node
+* replace console logging with simple log funcion.

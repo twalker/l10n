@@ -101,7 +101,7 @@
 				dfr;
 	
 			// Generate a storage key
-			// e.g. 'en-US:packageA,packageB'
+			// e.g. 'l10n:some/localization/endpoint:culture=en-US,package=packageA'
 			if (/https/.test(document.location.protocol)) {
 				// Guard from FF3.5+ throwing a security error when accessing https stored items from http.
 				keyParts.push('secure');
@@ -109,7 +109,6 @@
 			
 			storageKey = keyParts.join(':');
 			
-			console.log('storageKey', storageKey)
 			if(!promised[storageKey]){
 				stored = (supportsSessionStorage) ? sessionStorage.getItem(storageKey) : null;
 				if (stored === null) {
