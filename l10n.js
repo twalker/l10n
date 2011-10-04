@@ -91,12 +91,11 @@
 		};
 	
 		return function(url, params){
-			var settings = $.extend({
+			var query = $.extend({
 					culture: self.culture.toISOString()
-				}, options || {}),
+				}, params || {}),
 				
-				query = { culture: settings.culture },
-				keyParts = ['l10n', settings.culture],
+				keyParts = ['l10n', url, $.param(query).split('&').sort()],
 				storageKey,
 				stored,
 				dfr;
@@ -107,20 +106,15 @@
 				// Guard from FF3.5+ throwing a security error when accessing https stored items from http.
 				keyParts.push('secure');
 			}
-			if ($.isArray(settings.packages)){
-				settings.packages = settings.packages.sort().join(',')
-			}
-			
-			query.packages = settings.packages;
-			keyParts.push(settings.packages);
 			
 			storageKey = keyParts.join(':');
-
+			
+			console.log('storageKey', storageKey)
 			if(!promised[storageKey]){
 				stored = (supportsSessionStorage) ? sessionStorage.getItem(storageKey) : null;
 				if (stored === null) {
 					dfr = new $.Deferred();
-					$.getJSON(settings.url, query)
+					$.getJSON(url, query)
 						.success(function (oText) {
 							if (supportsSessionStorage) {
 								sessionStorage.setItem(storageKey, JSON.stringify(oText));

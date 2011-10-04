@@ -6,9 +6,10 @@ $(document).ready(function(){
 		return sessionStorage && sessionStorage.getItem;
 	})();
 
-	function generateStorageKey(iso, packages){
-		var storageKey = 'l10n:' + iso + ':' + ($.isArray(packages) ? packages.join(',') : packages);
-		return storageKey;
+	function generateStorageKey(url, params){
+		//var storageKey = 'l10n:' + iso + ':' + ($.isArray(packages) ? packages.join(',') : packages);
+		keyParts = ['l10n', url, $.param(params).split('&').sort()];
+		return keyParts.join(':');
 	}
 	
 	function clearTextStorage(storageKey){
@@ -45,14 +46,14 @@ $(document).ready(function(){
 				cbResolveAfter = sinon.spy(),
 				cbReject = sinon.spy(),
 				getSpy = sinon.spy(),
-				storageKey = generateStorageKey('en-US', ['packageA','packageB']),
+				storageKey = generateStorageKey('fake/service', {packages: ['packageA','packageB']}),
 				promise1, promise2;
 		
 		fakeServer.respondWith(
 			"GET", /fake\/service/,
 		  [200, { "Content-Type": "application/json" }, JSON.stringify(this.fakePackage)]
 		);
-		promise1 = $.l10n.getText({url: 'fake/service', packages: ['packageA','packageB']}).done(cbResolve);
+		promise1 = $.l10n.getText('fake/service', {packages: ['packageA','packageB']}).done(cbResolve);
 		
 		fakeServer.respond();
 		
@@ -66,7 +67,7 @@ $(document).ready(function(){
 		oText.get('next', getSpy);
 		ok(getSpy.calledWith('Następna'), "extended get method should allow a callback and call it when the key exists.");
 
-		promise2 = $.l10n.getText({url: 'fake/service', packages: ['packageA','packageB']}).done(cbResolveAfter);
+		promise2 = $.l10n.getText('fake/service', { packages: ['packageA','packageB']}).done(cbResolveAfter);
 		ok(cbResolveAfter.called, "should call done callback even with reused promises.");
 		
 		//ok(cbResolveAfter.calledWith(this.fakePackage), "should call subsequent resolve handlers the localized text object");
@@ -80,8 +81,8 @@ $(document).ready(function(){
 
 	test("getText (multiple invocations in $.when construct)", 2, function(){
 		var fakeServer = sinon.sandbox.useFakeServer(),
-				storageKey1 = generateStorageKey('en-US', 'packageA'),
-				storageKey2 = generateStorageKey('en-US', 'packageB'),
+				storageKey1 = generateStorageKey('/fakeservice', {packages:'packageA'}),
+				storageKey2 = generateStorageKey('/fakeservice', {packages:'packageB'}),
 				package1 = {hi:'mom'},
 				package2 = {hello:'dad'};
 
@@ -96,8 +97,8 @@ $(document).ready(function(){
 		);
 		
 		$.when(
-			$.l10n.getText({url: 'fakeservice', packages: 'packageA'}),
-			$.l10n.getText({url: 'fakeservice', packages: 'packageB'})
+			$.l10n.getText('fakeservice', { packages: 'packageA'}),
+			$.l10n.getText('fakeservice', { packages: 'packageB'})
 			)
 			.then(
 				function(p1, p2){
@@ -113,13 +114,12 @@ $(document).ready(function(){
 	});
 
 	
-	
 	test("getText (rejection)", 2, function(){
 		var fakeServer = sinon.sandbox.useFakeServer(),
 				cbReject = sinon.spy(),
-				storageKey = generateStorageKey('en-US', document.location.pathname, []);
+				storageKey = generateStorageKey('no/exist');
 
-		var promise3 = $.l10n.getText({url: 'no/exist'}).fail(cbReject);
+		var promise3 = $.l10n.getText('no/exist').fail(cbReject);
 		fakeServer.respond();
 		
 		ok(cbReject.called, "should call reject/fail callbacks.");
@@ -129,8 +129,8 @@ $(document).ready(function(){
 	test("getText (primed session storage)", 1, function(){
 		var stored = {hi: "mom"};
 		if(supportsStorage){
-			sessionStorage.setItem(generateStorageKey('en-US', 'packageA'), JSON.stringify(stored));
-			$.l10n.getText({packages: ['packageA']}).done(function(oTxt){
+			sessionStorage.setItem(generateStorageKey('some/url', {packages:'packageA'}), JSON.stringify(stored));
+			$.l10n.getText('some/url', {packages: ['packageA']}).done(function(oTxt){
 				equal(oTxt.get('hi'), 'mom', "Should retrieve text objects from session sessionStorage.");
 			});
 		} else {
