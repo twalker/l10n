@@ -90,10 +90,8 @@
 			});
 		};
 	
-		return function(options){
+		return function(url, params){
 			var settings = $.extend({
-					url: '/l10n/gettext',
-					packages: [],
 					culture: self.culture.toISOString()
 				}, options || {}),
 				
@@ -161,9 +159,10 @@
 	*/
 	self.getScript = function(url, callback){
 		var dfr = new $.Deferred(),
+				callback = $.isFunction(callback) ? callback : $.noop;
 				cultureUrl = url.replace('ISO', self.culture.toISOString()),
 				langUrl = url.replace('ISO', self.culture.lang);
-	
+		
 		$.getScript(cultureUrl).then(
 				[callback, dfr.resolve],
 				function(){

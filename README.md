@@ -8,7 +8,7 @@ culture : Current culture ISO code from navigator.language.
     
 getText : Promises to retrieve a localized text object from a localization endpoint.
 
-    $.when($.l10n.getText({packages: ['scroller']}) 
+    $.when($.l10n.getText('/l10n/gettext', { package: 'scroller' }) 
       .then(function(oTxt){
         $.scroller.setDefaults({prev: oTxt.get('Previous'), next: oTxt.get('Next')});
       });
