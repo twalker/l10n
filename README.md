@@ -33,12 +33,3 @@ getScript : Promises to load a localization script based on the current culture.
 
 * jQuery 1.5+
 * json2.js
-
-###TODO:
-
-* simplify getText args to (url, params)
-* create sample getText endpoint using node
-* Create example page (datepicker, possibly validation for a few cultures)
-* replace console logging with simple log funcion.
-* re-consider using CommonJS module pattern instead
-* potentially deal with nested data structure
