@@ -13,7 +13,7 @@ getText : Promises to retrieve a localized text object from a localization endpo
         $.scroller.setDefaults({prev: oTxt.get('Previous'), next: oTxt.get('Next')});
       });
 
-getScript : Loads a localized script based on the current culture.
+getScript : Promises to load a localization script based on the current culture.
 
     $.l10n.getScript('js/datepicker_ISO.js', function(){
       // Will try loading a script based on current culture 
@@ -22,10 +22,11 @@ getScript : Loads a localized script based on the current culture.
     });
 
 ###Goals
+
 * Keep hard-coded text out of functional js.
 * Be asynchronous and not block rendering (use promises).
-* Client does not fetch text of different cultures.
-* Use sessionStorage when available.
+* Client does not fetch text/scripts for cultures other than the current culture.
+* Cache with sessionStorage remembered promises.
 * Be portable: server agnostic, easily added to custom namespace
 
 ###Dependencies
@@ -35,8 +36,9 @@ getScript : Loads a localized script based on the current culture.
 
 ###TODO:
 
-x simplify getText args to (url, params)
-* re-consider using CommonJS module pattern instead
-* manage individual packages in storage
+* simplify getText args to (url, params)
 * create sample getText endpoint using node
+* Create example page (datepicker, possibly validation for a few cultures)
 * replace console logging with simple log funcion.
+* re-consider using CommonJS module pattern instead
+* potentially deal with nested data structure

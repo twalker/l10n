@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	// helper methods to deal with sessionStorage and emulate i18n.getText's key creation, 
+	// helper methods to deal with sessionStorage and emulate l10n.getText's key creation, 
 	// so we can removeItems from storage without also clearing QUnit's sessionStorage.
 	var supportsStorage = (function(){
 		return sessionStorage && sessionStorage.getItem;
@@ -23,7 +23,7 @@ $(document).ready(function(){
 		}
 	}
 
-	module("i18n", {
+	module("l10n", {
 		setup: function(){
 			this.fakePackage = {"previous": "Poprzedni","next": "Następna"};
 		},
